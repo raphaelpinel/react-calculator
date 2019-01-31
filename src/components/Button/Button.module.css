@@ -1,0 +1,53 @@
+.Button {
+  /* width: 60px;
+  height: 60px;
+  background: #444;
+  color: white;
+  border-radius: 100%; */
+
+  display: inline-block;
+  background: #444;
+  border-radius: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
+  height: 30px;
+  padding: 18px 18px 18px 18px;
+  margin: 8px;
+  text-align: center;
+  min-width: 30px;
+}
+
+.Button:hover {
+  background: #777;
+}
+.double {
+  width: 50px;
+  border-radius: 30px;
+  padding: 18px 78px 18px 30px;
+  text-align: left;
+}
+
+.lightgrey {
+  color: black;
+  background: #bbb;
+}
+.lightgrey:hover {
+  background: #fff;
+}
+
+.orange {
+  color: white;
+  background: orange;
+}
+
+.orange:hover,
+.orange.active:hover {
+  background: #f5dd75;
+  color: orange;
+}
+.orange:active,
+.orange.active {
+  background: white;
+  color: orange;
+}

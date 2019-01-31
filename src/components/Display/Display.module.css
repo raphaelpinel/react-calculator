@@ -1,0 +1,14 @@
+.Display {
+  height: 150px;
+  font-size: 70px;
+  font-weight: 300;
+  text-align: right;
+  position: relative;
+}
+
+.Display span {
+  margin: 10px 30px 0 20px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
