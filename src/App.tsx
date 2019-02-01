@@ -63,15 +63,22 @@ class App extends Component<{}, any> {
     const result = eval(
       ValueEnteredBefore.concat(operator, lastEnteredValue)
     ).toString();
-    console.log(result);
+    //removes the initial zero if it occurs, try "6 ="
+    for (let i = 0; i < result.length; i++) {
+      if (result[0] === '0') {
+        console.log('leading zero');
+        result.slice(0);
+      }
+    }
 
-    //case when the result and the last entered value are the same, force a refresh:
     this.setState({
       inputValue: result,
       operator: '',
       firstPartValue: '',
       resetFirstPart: true
     });
+
+    //case when the result and the last entered value are the same, it would be nice to force a refresh:
     if (result === lastEnteredValue) {
       // example: try 49/7=
       console.log('same value! It would be nice to force update/refresh!');
