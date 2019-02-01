@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Button.module.css';
 
-const Button = props => {
+const Button = (props: any) => {
   const classesArray = [styles.Button];
   if (props.special) {
     const specialStyle = props.special;
@@ -9,7 +9,11 @@ const Button = props => {
   }
 
   return (
-    <div className={classesArray.join(' ')} data-value={props.value} active>
+    <div
+      className={classesArray.join(' ')}
+      data-value={props.value}
+      onClick={props.click}
+    >
       {props.label}
     </div>
   );

@@ -1,11 +1,10 @@
 import React from 'react';
 import styles from './Display.module.css';
 
-const Display = props => {
-  const string = props.data.join('');
+const Display = (props: any) => {
   return (
     <div className={styles.Display}>
-      <span>{string}</span>
+      <span>{props.inputValue}</span>
     </div>
   );
 };
