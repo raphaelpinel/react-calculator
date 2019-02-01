@@ -1,7 +1,10 @@
 #React Calculator
 
-a fun experiment with React
-Sources of inspiration: https://hackernoon.com/create-a-simple-calculator-app-in-react-1ec6a7bbe09d
+a fun experiment with React iOS style!
+See the live project here:
+https://react-ios-calculator.firebaseapp.com
+
+I had fun to code the css from scratch and the functionalities too!
 
 In the project directory, you can run:
 
