@@ -45,6 +45,17 @@ class App extends Component<{}, any> {
   handleClick = (event: any) => {
     console.log('handleClick');
   };
+  inverse = () => {
+    let inputCopy = Object.values(this.state)[0];
+    const minus = '-';
+    if (inputCopy.charAt(0) === minus) {
+      inputCopy = inputCopy.substr(1);
+    } else {
+      inputCopy = minus.concat(inputCopy);
+    }
+    this.setState({ inputValue: inputCopy });
+  };
+
   calculate = () => {
     const lastEnteredValue = this.state.inputValue;
     const operator = this.state.operator;
@@ -86,7 +97,7 @@ class App extends Component<{}, any> {
             special="lightgrey"
           />
           <Button
-            click={this.handleClick}
+            click={this.inverse}
             label="+/-"
             value="+/-"
             special="lightgrey"
