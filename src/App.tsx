@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './App.module.css';
 
-import Display from './components/Display/Display';
+import Display from './components/Display/Display.js';
 import Button from './components/Button/Button';
 
 interface IState {
@@ -63,6 +63,8 @@ class App extends Component<{}, any> {
     const result = eval(
       ValueEnteredBefore.concat(operator, lastEnteredValue)
     ).toString();
+    console.log(result);
+
     //case when the result and the last entered value are the same, force a refresh:
     this.setState({
       inputValue: result,
