@@ -7,28 +7,71 @@ import Button from './components/Button/Button';
 interface IState {
   result: number;
 }
-class App extends Component<
-  {},
-  { inputValue: string; operator: string; previousValue: string }
-> {
+//{ inputValue: string; operator: string; firstPartValue: string }
+class App extends Component<{}, any> {
   constructor(props: any) {
     super(props);
-    this.state = { inputValue: '10', operator: '', previousValue: '' };
+    this.state = {
+      inputValue: '0', // the value displayed
+      operator: '', // an operator can be "x, +, -, /"
+      firstPartValue: '', // after the user has entered an operator (x, +, -, /), the number displayed previously moves to firsPartValue
+      resetFirstPart: false // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
+    };
   }
 
   numberClick = (event: any) => {
-    const resultCopy = Object.values(this.state)[0];
-    const currentValue = event.currentTarget.dataset.value;
-    this.setState({ inputValue: currentValue.concat(resultCopy) });
+    let inputValueCopy = Object.values(this.state)[0];
+    if (this.state.resetFirstPart) {
+      // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
+      this.setState({
+        inputValue: '0',
+        firstPartValue: inputValueCopy,
+        resetFirstPart: false
+      });
+      inputValueCopy = '0';
+    }
+    if (inputValueCopy === '0') {
+      inputValueCopy = ''; // replaces the first zero with the actually typed digit
+    }
+    const currentValue = event.currentTarget.dataset.value; //the digit the user typed
+    this.setState({ inputValue: inputValueCopy.concat(currentValue) });
   };
   operatorClick = (event: any) => {
     const currentValue = event.currentTarget.dataset.value;
-    console.log(event.currentTarget.dataset);
-
-    console.log('operatorClick', currentValue);
+    let inputValueCopy = Object.values(this.state)[0]; //makes a copy of the number currently displayed in order
+    // copy the previous inputValue to the state as previousValue
+    this.setState({ operator: currentValue, resetFirstPart: true });
   };
   handleClick = (event: any) => {
     console.log('handleClick');
+  };
+  calculate = () => {
+    const lastEnteredValue = this.state.inputValue;
+    const operator = this.state.operator;
+    const ValueEnteredBefore = this.state.firstPartValue;
+    const result = eval(
+      ValueEnteredBefore.concat(operator, lastEnteredValue)
+    ).toString();
+    //case when the result and the last entered value are the same, force a refresh:
+    this.setState({
+      inputValue: result,
+      operator: '',
+      firstPartValue: '',
+      resetFirstPart: true
+    });
+    if (result === lastEnteredValue) {
+      // example: try 49/7=
+      console.log('same value! It would be nice to force update/refresh!');
+      //force update
+    }
+  };
+  reset = () => {
+    this.setState({
+      inputValue: '0',
+      operator: '',
+      previousValue: '',
+      resetFirstPart: true
+    });
   };
 
   render() {
@@ -37,7 +80,7 @@ class App extends Component<
         <Display inputValue={this.state.inputValue} />
         <div className="Buttons">
           <Button
-            click={this.handleClick}
+            click={this.reset}
             label="AC"
             value="AC"
             special="lightgrey"
@@ -98,12 +141,7 @@ class App extends Component<
             special="double"
           />
           <Button click={this.numberClick} label="." value="." />
-          <Button
-            click={this.handleClick}
-            label="="
-            value="="
-            special="orange"
-          />
+          <Button click={this.calculate} label="=" value="=" special="orange" />
         </div>
       </div>
     );
