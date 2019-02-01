@@ -34,8 +34,6 @@ class App extends Component<{}, any> {
       inputValueCopy = ''; // replaces the first zero with the actually typed digit
     }
     let currentValue = event.currentTarget.dataset.value; //the digit the user typed
-    //truncates if length > 12
-    console.log('currentValue', currentValue);
 
     let result = inputValueCopy;
     if (inputValueCopy.length <= 11) {
