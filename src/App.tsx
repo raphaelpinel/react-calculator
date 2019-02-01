@@ -33,8 +33,16 @@ class App extends Component<{}, any> {
     if (inputValueCopy === '0') {
       inputValueCopy = ''; // replaces the first zero with the actually typed digit
     }
-    const currentValue = event.currentTarget.dataset.value; //the digit the user typed
-    this.setState({ inputValue: inputValueCopy.concat(currentValue) });
+    let currentValue = event.currentTarget.dataset.value; //the digit the user typed
+    //truncates if length > 12
+    console.log('currentValue', currentValue);
+
+    let result = inputValueCopy;
+    if (inputValueCopy.length <= 11) {
+      //limits the amount of digits the user can enter
+      result = inputValueCopy.concat(currentValue);
+    }
+    this.setState({ inputValue: result });
   };
   operatorClick = (event: any) => {
     const currentValue = event.currentTarget.dataset.value;

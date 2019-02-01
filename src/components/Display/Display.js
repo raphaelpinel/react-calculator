@@ -2,21 +2,37 @@ import React from 'react';
 import styles from './Display.module.css';
 
 const Display = props => {
-  console.log(props.inputValue.length);
+  let display = props.inputValue;
   let bigNumberStyle = null;
-  if (props.inputValue.length > 6) {
-    bigNumberStyle = { fontSize: '50px' };
+  if (display.length >= 10) {
+    display =
+      display.slice(0, display.length - 9) +
+      ' ' +
+      display.slice(display.length - 9, display.length - 6) +
+      ' ' +
+      display.slice(display.length - 6, display.length - 3) +
+      ' ' +
+      display.slice(display.length - 3, 100);
+    bigNumberStyle = { fontSize: '40px' };
   }
-  if (props.inputValue.length > 10) {
-    bigNumberStyle = { fontSize: '30px' };
+  if (display.length >= 7 && display.length < 10) {
+    display =
+      display.slice(0, display.length - 6) +
+      ' ' +
+      display.slice(display.length - 6, display.length - 3) +
+      ' ' +
+      display.slice(display.length - 3, 100);
+    bigNumberStyle = { fontSize: '55px' };
   }
-  if (props.inputValue.length > 17) {
-    bigNumberStyle = { fontSize: '20px' };
+  if (display.length >= 4 && display.length < 7) {
+    display =
+      display.slice(0, display.length - 3) +
+      ' ' +
+      display.slice(display.length - 3, 100);
   }
-
   return (
     <div className={styles.Display} style={bigNumberStyle}>
-      <span>{props.inputValue}</span>
+      <span>{display}</span>
     </div>
   );
 };
