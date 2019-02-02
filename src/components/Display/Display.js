@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Display.module.css';
 
 const Display = props => {
-  let display = props.inputValue;
+  let display = props.display;
   let bigNumberStyle = null;
   if (display.length >= 10) {
     display =

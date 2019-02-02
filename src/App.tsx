@@ -12,39 +12,40 @@ class App extends Component<{}, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      inputValue: '0', // the value displayed
+      display: '0', // the value displayed
       operator: '', // an operator can be "x, +, -, /"
       firstPartValue: '', // after the user has entered an operator (x, +, -, /), the number displayed previously moves to firsPartValue
-      resetFirstPart: false // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
+      resetFirstPart: false, // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
+      memory: ''
     };
   }
 
   numberClick = (event: any) => {
-    let inputValueCopy = Object.values(this.state)[0];
+    let displayCopy = Object.values(this.state)[0];
     if (this.state.resetFirstPart) {
       // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
       this.setState({
-        inputValue: '0',
-        firstPartValue: inputValueCopy,
+        display: '0',
+        firstPartValue: displayCopy,
         resetFirstPart: false
       });
-      inputValueCopy = '0';
+      displayCopy = '0';
     }
-    if (inputValueCopy === '0') {
-      inputValueCopy = ''; // replaces the first zero with the actually typed digit
+    if (displayCopy === '0') {
+      displayCopy = ''; // replaces the first zero with the actually typed digit
     }
     let currentValue = event.currentTarget.dataset.value; //the digit the user typed
 
-    let result = inputValueCopy;
-    if (inputValueCopy.length <= 11) {
+    let result = displayCopy;
+    if (displayCopy.length <= 11) {
       //limits the amount of digits the user can enter
-      result = inputValueCopy.concat(currentValue);
+      result = displayCopy.concat(currentValue);
     }
-    this.setState({ inputValue: result });
+    this.setState({ display: result });
   };
   operatorClick = (event: any) => {
     const currentValue = event.currentTarget.dataset.value; // the operator entered by user
-    // copy the previous inputValue to the state as previousValue
+    // copy the previous display to the state as previousValue
     this.setState({ operator: currentValue, resetFirstPart: true });
   };
   percentage = (event: any) => {
@@ -58,11 +59,11 @@ class App extends Component<{}, any> {
     } else {
       inputCopy = minus.concat(inputCopy);
     }
-    this.setState({ inputValue: inputCopy });
+    this.setState({ display: inputCopy });
   };
 
   calculate = () => {
-    const lastEnteredValue = this.state.inputValue;
+    const lastEnteredValue = this.state.display;
     const operator = this.state.operator;
     let ValueEnteredBefore = this.state.firstPartValue;
     if (ValueEnteredBefore[0] === '0') {
@@ -74,7 +75,7 @@ class App extends Component<{}, any> {
     ).toString();
 
     this.setState({
-      inputValue: result,
+      display: result,
       operator: '',
       firstPartValue: '',
       resetFirstPart: true
@@ -89,7 +90,7 @@ class App extends Component<{}, any> {
   };
   reset = () => {
     this.setState({
-      inputValue: '0',
+      display: '0',
       operator: '',
       previousValue: '',
       resetFirstPart: true
@@ -99,7 +100,7 @@ class App extends Component<{}, any> {
   render() {
     return (
       <div className={styles.App}>
-        <Display inputValue={this.state.inputValue} />
+        <Display display={this.state.display} />
         <div className="Buttons">
           <Button
             click={this.reset}
