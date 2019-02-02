@@ -43,13 +43,12 @@ class App extends Component<{}, any> {
     this.setState({ inputValue: result });
   };
   operatorClick = (event: any) => {
-    const currentValue = event.currentTarget.dataset.value;
-    let inputValueCopy = Object.values(this.state)[0]; //makes a copy of the number currently displayed in order
+    const currentValue = event.currentTarget.dataset.value; // the operator entered by user
     // copy the previous inputValue to the state as previousValue
     this.setState({ operator: currentValue, resetFirstPart: true });
   };
-  handleClick = (event: any) => {
-    console.log('handleClick');
+  percentage = (event: any) => {
+    console.log('Sorry the percentage method has not yet been implemented');
   };
   inverse = () => {
     let inputCopy = Object.values(this.state)[0];
@@ -115,7 +114,7 @@ class App extends Component<{}, any> {
             special="lightgrey"
           />
           <Button
-            click={this.handleClick}
+            click={this.percentage}
             label="%"
             value="%"
             special="lightgrey"
