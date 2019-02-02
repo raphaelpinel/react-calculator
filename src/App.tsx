@@ -65,17 +65,17 @@ class App extends Component<{}, any> {
   calculate = () => {
     const lastEnteredValue = this.state.inputValue;
     const operator = this.state.operator;
-    const ValueEnteredBefore = this.state.firstPartValue;
+    let ValueEnteredBefore = this.state.firstPartValue;
+    //removes the initial zero if it occurs, try "6 ="
+    for (let i = 0; i < ValueEnteredBefore.length; i++) {
+      if (ValueEnteredBefore[0] === '0') {
+        ValueEnteredBefore = '';
+        console.log('leading zero');
+      }
+    }
     const result = eval(
       ValueEnteredBefore.concat(operator, lastEnteredValue)
     ).toString();
-    //removes the initial zero if it occurs, try "6 ="
-    for (let i = 0; i < result.length; i++) {
-      if (result[0] === '0') {
-        console.log('leading zero');
-        result.slice(0);
-      }
-    }
 
     this.setState({
       inputValue: result,
