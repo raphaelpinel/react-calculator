@@ -4,100 +4,154 @@ import styles from './App.module.css';
 import Display from './components/Display/Display.js';
 import Button from './components/Button/Button';
 
-interface IState {
-  result: number;
-}
-//{ inputValue: string; operator: string; firstPartValue: string }
-class App extends Component<{}, any> {
-  constructor(props: any) {
+class App extends Component {
+  constructor(props) {
     super(props);
     this.state = {
       display: '0', // the value displayed
-      operator: '', // an operator can be "x, +, -, /"
-      firstPartValue: '', // after the user has entered an operator (x, +, -, /), the number displayed previously moves to firsPartValue
-      resetFirstPart: false, // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
-      memory: ''
+      memory: '', // where the numbers and operators are stored
+      calculate: false,
+      firstOperator: '',
+      operator: [],
+      resetDisplay: false // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
     };
   }
 
-  numberClick = (event: any) => {
+  numberClick = event => {
+    const stateCopy = Object.assign({}, this.state);
+
     let displayCopy = Object.values(this.state)[0];
-    if (this.state.resetFirstPart) {
+    if (this.state.resetDisplay) {
       // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
       this.setState({
-        display: '0',
-        firstPartValue: displayCopy,
-        resetFirstPart: false
+        resetDisplay: false
       });
-      displayCopy = '0';
+      displayCopy = '';
     }
     if (displayCopy === '0') {
       displayCopy = ''; // replaces the first zero with the actually typed digit
     }
     let currentValue = event.currentTarget.dataset.value; //the digit the user typed
 
-    let result = displayCopy;
     if (displayCopy.length <= 11) {
       //limits the amount of digits the user can enter
-      result = displayCopy.concat(currentValue);
+      displayCopy = displayCopy + currentValue;
     }
-    this.setState({ display: result });
+    this.setState({
+      display: displayCopy,
+      shortMemory: displayCopy,
+      memory: stateCopy.memory + currentValue
+    });
   };
-  operatorClick = (event: any) => {
+
+  operatorClick = event => {
+    const stateCopy = Object.assign({}, this.state);
     const currentValue = event.currentTarget.dataset.value; // the operator entered by user
-    // copy the previous display to the state as previousValue
-    this.setState({ operator: currentValue, resetFirstPart: true });
+
+    // if the last entered operator is "*" or "/", calculate
+    // if the the already contained operator is + or -
+
+    if (!stateCopy.firstOperator) {
+      console.log('no first operator');
+      return this.setState({
+        firstOperator: currentValue,
+        display: eval(this.removeLastOperator(stateCopy.memory)).toString(),
+        memory:
+          eval(this.removeLastOperator(stateCopy.memory)).toString() +
+          currentValue,
+        resetDisplay: true,
+        operator: stateCopy.operator.concat(currentValue)
+      });
+    } else if (
+      (currentValue === '*' || currentValue === '/') &&
+      (stateCopy.firstOperator === '+' || stateCopy.firstOperator === '-')
+    ) {
+      // don't calculate if it was + or -
+      console.log('continue enter number');
+      this.setState({
+        memory: eval(this.removeLastOperator(stateCopy.memory)) + currentValue,
+        resetDisplay: true
+      });
+    }
+
+    this.setState({
+      display: eval(this.removeLastOperator(stateCopy.memory)).toString(),
+      memory:
+        eval(this.removeLastOperator(stateCopy.memory)).toString() +
+        currentValue,
+      resetDisplay: true,
+      operator: stateCopy.operator.concat(currentValue),
+      firstOperator: ''
+    });
   };
-  percentage = (event: any) => {
+  percentage = event => {
     console.log('Sorry the percentage method has not yet been implemented');
   };
   inverse = () => {
-    let inputCopy = Object.values(this.state)[0];
-    const minus = '-';
-    if (inputCopy.charAt(0) === minus) {
-      inputCopy = inputCopy.substr(1);
+    let displayCopy = Object.values(this.state)[0];
+    const memoryCopy = Object.values(this.state)[1];
+    if (displayCopy.charAt(0) === '-') {
+      displayCopy = displayCopy.substr(1); //if it already starts with '-', remove the '-'
     } else {
-      inputCopy = minus.concat(inputCopy);
+      displayCopy = '-' + displayCopy; //otherwise, adds '-' before
     }
-    this.setState({ display: inputCopy });
+    this.setState({ display: displayCopy });
   };
 
   calculate = () => {
-    const lastEnteredValue = this.state.display;
-    const operator = this.state.operator;
-    let ValueEnteredBefore = this.state.firstPartValue;
-    if (ValueEnteredBefore[0] === '0') {
-      //removes the initial zero if it occurs, try "6 ="
-      ValueEnteredBefore = '';
-    }
-    const result = eval(
-      ValueEnteredBefore.concat(operator, lastEnteredValue)
-    ).toString();
+    console.log('calculate');
+
+    let stateCopy = Object.assign({}, this.state);
+
+    // if (stateCopy.memory[0] === '0') {
+    //   //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
+    //   stateCopy.memory = '';
+    // }
+
+    const result = eval(this.removeLastOperator(stateCopy.memory)).toString();
 
     this.setState({
       display: result,
-      operator: '',
-      firstPartValue: '',
-      resetFirstPart: true
+      memory: result,
+      shortMemory: '',
+      resetDisplay: true,
+      firstOperator: ''
     });
 
     //case when the result and the last entered value are the same, it would be nice to force a refresh:
-    if (result === lastEnteredValue) {
+    if (result === this.state.display) {
       // example: try 49/7=
       console.log('same value! It would be nice to force update/refresh!');
       //force update
     }
   };
+  removeLastOperator = string => {
+    let result;
+    const lastCharacter = string[string.length - 1];
+    if (
+      lastCharacter === '+' ||
+      lastCharacter === '-' ||
+      lastCharacter === '*' ||
+      lastCharacter === '/'
+    ) {
+      result = string.slice(0, -1);
+      console.log('modified string', result);
+      return result;
+    }
+    console.log('untouched string', result);
+    return string;
+  };
+
   reset = () => {
     this.setState({
       display: '0',
-      operator: '',
-      previousValue: '',
-      resetFirstPart: true
+      memory: '',
+      resetDisplay: true
     });
   };
 
   render() {
+    this.removeLastOperator(this.state.memory);
     return (
       <div className={styles.App}>
         <Display display={this.state.display} />
