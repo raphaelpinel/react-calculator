@@ -66,12 +66,9 @@ class App extends Component<{}, any> {
     const lastEnteredValue = this.state.inputValue;
     const operator = this.state.operator;
     let ValueEnteredBefore = this.state.firstPartValue;
-    //removes the initial zero if it occurs, try "6 ="
-    for (let i = 0; i < ValueEnteredBefore.length; i++) {
-      if (ValueEnteredBefore[0] === '0') {
-        ValueEnteredBefore = '';
-        console.log('leading zero');
-      }
+    if (ValueEnteredBefore[0] === '0') {
+      //removes the initial zero if it occurs, try "6 ="
+      ValueEnteredBefore = '';
     }
     const result = eval(
       ValueEnteredBefore.concat(operator, lastEnteredValue)
