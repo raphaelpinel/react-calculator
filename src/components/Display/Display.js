@@ -14,6 +14,7 @@ const Display = props => {
     bigNumberStyle = { fontSize: '50px' };
   }
   function add3digitsSeparator(x) {
+    // creates a space every 3 digits on the left part of the float only
     const parts = x.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     return parts.join('.');
