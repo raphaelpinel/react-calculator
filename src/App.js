@@ -78,13 +78,26 @@ class App extends Component {
     console.log('Sorry the percentage method has not yet been implemented');
   };
   inverse = () => {
-    let displayCopy = Object.values(this.state)[0];
-    if (displayCopy.charAt(0) === '-') {
-      displayCopy = displayCopy.substr(1); //if it already starts with '-', remove the '-'
+    const stateCopy = Object.assign({}, this.state);
+    const memory = stateCopy.memory;
+    const display = stateCopy.display;
+    const lastCharacter = memory[memory.length - 1];
+    let firstPart;
+    if (
+      //remove the last operator if the user had already entered it
+      lastCharacter === '+' ||
+      lastCharacter === '-' ||
+      lastCharacter === '*' ||
+      lastCharacter === '/'
+    ) {
+      firstPart = memory.slice(0, memory.length - display.length - 1);
     } else {
-      displayCopy = '-' + displayCopy; //otherwise, adds '-' before
+      firstPart = memory.slice(0, memory.length - display.length);
     }
-    this.setState({ display: displayCopy });
+    this.setState({
+      display: '-' + display,
+      memory: firstPart + '(-' + display + ')'
+    });
   };
 
   calculate = () => {
