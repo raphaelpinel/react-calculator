@@ -11,8 +11,8 @@ class App extends Component {
       display: '0', // the value displayed
       memory: '', // where the numbers and operators are stored
       calculate: false,
-      firstOperator: '',
-      operator: [],
+      previousOperator: '',
+      operator: '',
       resetDisplay: false // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
     };
   }
@@ -37,6 +37,10 @@ class App extends Component {
       //limits the amount of digits the user can enter
       displayCopy = displayCopy + currentValue;
     }
+    if (stateCopy.memory[0] === '0') {
+      //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
+      stateCopy.memory = '';
+    }
     this.setState({
       display: displayCopy,
       shortMemory: displayCopy,
@@ -48,40 +52,47 @@ class App extends Component {
     const stateCopy = Object.assign({}, this.state);
     const currentValue = event.currentTarget.dataset.value; // the operator entered by user
 
-    // if the last entered operator is "*" or "/", calculate
-    // if the the already contained operator is + or -
+    // To enforce priority of calculation (* and / over + and -), check if the previous operator was + or - and prevent calculation.
 
-    if (!stateCopy.firstOperator) {
-      console.log('no first operator');
-      return this.setState({
-        firstOperator: currentValue,
-        display: eval(this.removeLastOperator(stateCopy.memory)).toString(),
-        memory:
-          eval(this.removeLastOperator(stateCopy.memory)).toString() +
-          currentValue,
-        resetDisplay: true,
-        operator: stateCopy.operator.concat(currentValue)
-      });
-    } else if (
+    if (currentValue === '*' || currentValue === '/') {
+      console.log('* or /');
+      console.log('stateCopy.previousOperator', stateCopy.previousOperator);
+      console.log(stateCopy);
+    }
+    if (
+      stateCopy.previousOperator === '+' ||
+      stateCopy.previousOperator === '-'
+    ) {
+      console.log('previous Operator is + or -');
+    }
+
+    if (
       (currentValue === '*' || currentValue === '/') &&
-      (stateCopy.firstOperator === '+' || stateCopy.firstOperator === '-')
+      (stateCopy.operator === '+' || stateCopy.operator === '-')
     ) {
       // don't calculate if it was + or -
       console.log('continue enter number');
-      this.setState({
-        memory: eval(this.removeLastOperator(stateCopy.memory)) + currentValue,
-        resetDisplay: true
+
+      if (stateCopy.memory[0] === '0') {
+        //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
+        stateCopy.memory = '';
+      }
+      return this.setState({
+        memory: this.preventOperatorAtEnd(stateCopy.memory) + currentValue,
+        resetDisplay: true,
+        operator: currentValue
       });
     }
 
     this.setState({
-      display: eval(this.removeLastOperator(stateCopy.memory)).toString(),
+      //default behavior to calculate
+      display: eval(this.preventOperatorAtEnd(stateCopy.memory)).toString(),
       memory:
-        eval(this.removeLastOperator(stateCopy.memory)).toString() +
+        eval(this.preventOperatorAtEnd(stateCopy.memory)).toString() +
         currentValue,
       resetDisplay: true,
-      operator: stateCopy.operator.concat(currentValue),
-      firstOperator: ''
+      operator: currentValue,
+      previousOperator: stateCopy.operator
     });
   };
   percentage = event => {
@@ -89,7 +100,6 @@ class App extends Component {
   };
   inverse = () => {
     let displayCopy = Object.values(this.state)[0];
-    const memoryCopy = Object.values(this.state)[1];
     if (displayCopy.charAt(0) === '-') {
       displayCopy = displayCopy.substr(1); //if it already starts with '-', remove the '-'
     } else {
@@ -99,23 +109,22 @@ class App extends Component {
   };
 
   calculate = () => {
-    console.log('calculate');
-
     let stateCopy = Object.assign({}, this.state);
 
-    // if (stateCopy.memory[0] === '0') {
-    //   //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
-    //   stateCopy.memory = '';
-    // }
+    if (stateCopy.memory[0] === '0') {
+      //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
+      stateCopy.memory = '';
+    }
 
-    const result = eval(this.removeLastOperator(stateCopy.memory)).toString();
+    const result = eval(this.preventOperatorAtEnd(stateCopy.memory)).toString();
 
     this.setState({
       display: result,
       memory: result,
       shortMemory: '',
       resetDisplay: true,
-      firstOperator: ''
+      previousOperator: '',
+      operator: ''
     });
 
     //case when the result and the last entered value are the same, it would be nice to force a refresh:
@@ -125,7 +134,8 @@ class App extends Component {
       //force update
     }
   };
-  removeLastOperator = string => {
+  preventOperatorAtEnd = string => {
+    //helper function to remove the last operator to prevent an error if eval('6*') would be run, and to avoid multiple operators in memory
     let result;
     const lastCharacter = string[string.length - 1];
     if (
@@ -135,10 +145,8 @@ class App extends Component {
       lastCharacter === '/'
     ) {
       result = string.slice(0, -1);
-      console.log('modified string', result);
       return result;
     }
-    console.log('untouched string', result);
     return string;
   };
 
@@ -151,7 +159,6 @@ class App extends Component {
   };
 
   render() {
-    this.removeLastOperator(this.state.memory);
     return (
       <div className={styles.App}>
         <Display display={this.state.display} />
