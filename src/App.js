@@ -75,8 +75,43 @@ class App extends Component {
     });
   };
   percentage = event => {
-    console.log('Sorry the percentage method has not yet been implemented');
+    console.log(
+      'Sorry the percentage method has not yet been implemented but we are working on it!'
+    );
+    const stateCopy = Object.assign({}, this.state);
+    let newDisplay;
+    let newMemory;
+    if (stateCopy.operator === '+' || stateCopy.operator === '-') {
+      newDisplay = (
+        (parseInt(stateCopy.display) / 100) *
+        parseInt(
+          stateCopy.memory.slice(
+            0,
+            stateCopy.memory.length - stateCopy.display.length - 1
+          )
+        )
+      ).toString();
+      newMemory =
+        stateCopy.memory.slice(
+          0,
+          stateCopy.memory.length - stateCopy.display.length
+        ) + newDisplay;
+    } else {
+      newDisplay = (parseInt(stateCopy.display) / 100).toString();
+      newMemory =
+        stateCopy.memory.slice(
+          0,
+          stateCopy.memory.length - stateCopy.display.length
+        ) + newDisplay;
+    }
+    this.setState({
+      display: newDisplay,
+      memory: newMemory,
+      resetDisplay: true,
+      operator: ''
+    });
   };
+
   inverse = () => {
     const stateCopy = Object.assign({}, this.state);
     const memory = stateCopy.memory;
