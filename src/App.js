@@ -66,43 +66,47 @@ class App extends Component {
 
     this.setState({
       //default behavior to calculate
-      display: eval(this.preventOperatorAtEnd(stateCopy.memory)).toString(),
+      display: this.fixFloatingPoint(
+        eval(this.preventOperatorAtEnd(stateCopy.memory))
+      ).toString(),
       memory:
-        eval(this.preventOperatorAtEnd(stateCopy.memory)).toString() +
-        currentValue,
+        this.fixFloatingPoint(
+          eval(this.preventOperatorAtEnd(stateCopy.memory))
+        ).toString() + currentValue,
       resetDisplay: true,
       operator: currentValue
     });
   };
+
+  fixFloatingPoint = val => Number.parseFloat(val.toFixed(8));
+
   percentage = event => {
-    console.log(
-      'Sorry the percentage method has not yet been implemented but we are working on it!'
-    );
     const stateCopy = Object.assign({}, this.state);
     let newDisplay;
     let newMemory;
     if (stateCopy.operator === '+' || stateCopy.operator === '-') {
-      newDisplay = (
-        (parseInt(stateCopy.display) / 100) *
-        parseInt(
+      newDisplay = this.fixFloatingPoint(
+        (stateCopy.display / 100) *
           stateCopy.memory.slice(
             0,
             stateCopy.memory.length - stateCopy.display.length - 1
           )
-        )
       ).toString();
-      newMemory =
+
+      newMemory = (
         stateCopy.memory.slice(
           0,
           stateCopy.memory.length - stateCopy.display.length
-        ) + newDisplay;
+        ) + newDisplay
+      ).toString();
     } else {
-      newDisplay = (parseInt(stateCopy.display) / 100).toString();
-      newMemory =
+      newDisplay = (stateCopy.display / 100).toString();
+      newMemory = (
         stateCopy.memory.slice(
           0,
           stateCopy.memory.length - stateCopy.display.length
-        ) + newDisplay;
+        ) + newDisplay
+      ).toString();
     }
     this.setState({
       display: newDisplay,
@@ -143,7 +147,9 @@ class App extends Component {
       stateCopy.memory = '';
     }
 
-    const result = eval(this.preventOperatorAtEnd(stateCopy.memory)).toString();
+    const result = this.fixFloatingPoint(
+      eval(this.preventOperatorAtEnd(stateCopy.memory))
+    ).toString();
 
     this.setState({
       display: result,
