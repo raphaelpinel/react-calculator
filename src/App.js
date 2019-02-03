@@ -78,7 +78,7 @@ class App extends Component {
     });
   };
 
-  fixFloatingPoint = val => Number.parseFloat(val.toFixed(8));
+  fixFloatingPoint = val => Number.parseFloat(val.toFixed(15));
 
   percentage = event => {
     const stateCopy = Object.assign({}, this.state);
