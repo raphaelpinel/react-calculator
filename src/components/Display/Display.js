@@ -5,34 +5,19 @@ const Display = props => {
   let display = props.display;
   let bigNumberStyle = null;
   if (display.length >= 10) {
-    display =
-      display.slice(0, display.length - 9) +
-      ' ' +
-      display.slice(display.length - 9, display.length - 6) +
-      ' ' +
-      display.slice(display.length - 6, display.length - 3) +
-      ' ' +
-      display.slice(display.length - 3, 100);
     bigNumberStyle = { fontSize: '40px' };
   }
   if (display.length >= 7 && display.length < 10) {
-    display =
-      display.slice(0, display.length - 6) +
-      ' ' +
-      display.slice(display.length - 6, display.length - 3) +
-      ' ' +
-      display.slice(display.length - 3, 100);
     bigNumberStyle = { fontSize: '55px' };
   }
-  if (display.length >= 4 && display.length < 7) {
-    display =
-      display.slice(0, display.length - 3) +
-      ' ' +
-      display.slice(display.length - 3, 100);
+  function add3digitsSeparator(x) {
+    var parts = x.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return parts.join('.');
   }
   return (
     <div className={styles.Display} style={bigNumberStyle}>
-      <span>{display}</span>
+      <span>{add3digitsSeparator(display)}</span>
     </div>
   );
 };
