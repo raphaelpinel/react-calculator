@@ -192,7 +192,6 @@ class App extends Component {
     //case when the result and the last entered value are the same, it would be nice to force a refresh:
     if (result === this.state.display) {
       // example: try 49/7=
-      console.log('same value! It would be nice to force update/refresh!');
       //force update
     }
   };
