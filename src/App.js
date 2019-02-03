@@ -34,9 +34,10 @@ class App extends Component {
       stateCopy.display = stateCopy.display + currentValue;
     }
     if (stateCopy.memory[0] === '0') {
-      //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
+      //removes the initial zero to prevent octal problem. Try to delete this if statement and type "0006 ="
       stateCopy.memory = '';
     }
+
     this.setState({
       display: stateCopy.display,
       memory: stateCopy.memory + currentValue
@@ -47,9 +48,8 @@ class App extends Component {
     const stateCopy = Object.assign({}, this.state);
     const currentValue = event.currentTarget.dataset.value; // the operator entered by user
 
-    // To enforce priority of calculation (* and / over + and -), check if the previous operator was + or - and prevent calculation.
-
     if (
+      // To enforce priority of calculation (* and / over + and -), check if the previous operator was + or - and prevent calculation.
       (currentValue === '*' || currentValue === '/') &&
       (stateCopy.operator === '+' || stateCopy.operator === '-')
     ) {
@@ -63,6 +63,8 @@ class App extends Component {
         operator: currentValue
       });
     }
+
+    stateCopy.memory = this.preventLeadingZeros(stateCopy.memory);
 
     this.setState({
       //default behavior to calculate
@@ -78,7 +80,34 @@ class App extends Component {
     });
   };
 
-  fixFloatingPoint = val => Number.parseFloat(val.toFixed(15));
+  preventLeadingZeros = memory => {
+    //remove eventual leading zeros to prevent octal error
+    const parts = memory.split(/(\+|-|\*|\/)/);
+    return parts.map(part => part.replace(/0+/, '')).join('');
+  };
+
+  preventOperatorAtEnd = string => {
+    //helper function to remove the last operator to prevent an error if eval('6*') would be run, and to avoid multiple operators in memory
+    let result;
+    const lastCharacter = string[string.length - 1];
+    if (
+      lastCharacter === '+' ||
+      lastCharacter === '-' ||
+      lastCharacter === '*' ||
+      lastCharacter === '/'
+    ) {
+      result = string.slice(0, -1);
+      return result;
+    }
+    return string;
+  };
+
+  fixFloatingPoint = val => {
+    if (val) {
+      return Number.parseFloat(val.toFixed(15));
+    }
+    return val;
+  };
 
   percentage = event => {
     const stateCopy = Object.assign({}, this.state);
@@ -148,7 +177,9 @@ class App extends Component {
     }
 
     const result = this.fixFloatingPoint(
-      eval(this.preventOperatorAtEnd(stateCopy.memory))
+      eval(
+        this.preventOperatorAtEnd(this.preventLeadingZeros(stateCopy.memory))
+      )
     ).toString();
 
     this.setState({
@@ -164,22 +195,6 @@ class App extends Component {
       console.log('same value! It would be nice to force update/refresh!');
       //force update
     }
-  };
-
-  preventOperatorAtEnd = string => {
-    //helper function to remove the last operator to prevent an error if eval('6*') would be run, and to avoid multiple operators in memory
-    let result;
-    const lastCharacter = string[string.length - 1];
-    if (
-      lastCharacter === '+' ||
-      lastCharacter === '-' ||
-      lastCharacter === '*' ||
-      lastCharacter === '/'
-    ) {
-      result = string.slice(0, -1);
-      return result;
-    }
-    return string;
   };
 
   reset = () => {
