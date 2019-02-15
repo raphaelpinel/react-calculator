@@ -1,4 +1,4 @@
-#React iOS Calculator
+# React iOS Calculator
 
 a fun experiment with React iOS style!
 See the live project here:
