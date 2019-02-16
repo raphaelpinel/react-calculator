@@ -68,6 +68,7 @@ class App extends Component {
       return this.setState({
         memory: this.preventOperatorAtEnd(stateCopy.memory) + currentValue,
         resetDisplay: true,
+        resetMemory: false,
         operator: currentValue
       });
     }
@@ -84,6 +85,7 @@ class App extends Component {
           eval(this.preventOperatorAtEnd(stateCopy.memory))
         ).toString() + currentValue,
       resetDisplay: true,
+      resetMemory: false,
       operator: currentValue
     });
   };
