@@ -11,7 +11,8 @@ class App extends Component {
       display: '0', // the value displayed
       memory: '', // where the numbers and operators are stored
       operator: '', // can be +, -, *, x
-      resetDisplay: false // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
+      resetDisplay: false, // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
+      resetMemory: false // set to true after equal
     };
   }
 
@@ -23,6 +24,13 @@ class App extends Component {
         resetDisplay: false
       });
       stateCopy.display = '';
+    }
+    if (this.state.resetMemory) {
+      // reset InputValue to reset after equal sign
+      this.setState({
+        resetMemory: false
+      });
+      stateCopy.memory = '';
     }
     if (stateCopy.display === '0') {
       stateCopy.display = ''; // replaces the first zero with the actually typed digit
@@ -188,6 +196,7 @@ class App extends Component {
       display: result,
       memory: result,
       resetDisplay: true,
+      resetMemory: true,
       operator: ''
     });
 
