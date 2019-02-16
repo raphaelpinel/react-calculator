@@ -162,9 +162,11 @@ class App extends Component {
     } else {
       firstPart = memory.slice(0, memory.length - display.length);
     }
+    // checks if the number starts already with a minus sign to remove it, otherwise adds it
+    const newDisplay = (display.charAt(0) === '-') ? display.substr(1) : `-${display}`;
     this.setState({
-      display: '-' + display,
-      memory: firstPart + '(-' + display + ')'
+      display: newDisplay,
+      memory: firstPart + newDisplay
     });
   };
 
