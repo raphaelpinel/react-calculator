@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
     this.state = {
       display: '0', // the value displayed
-      memory: '', // where the numbers and operators are stored
+      memory: '0', // where the numbers and operators are stored
       operator: '', // can be +, -, *, x
       resetDisplay: false, // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
       resetMemory: false // set to true after equal
@@ -32,7 +32,7 @@ class App extends Component {
       });
       stateCopy.memory = '';
     }
-    if (stateCopy.display === '0') {
+    if (stateCopy.display === '0' && stateCopy.memory === '0') {
       stateCopy.display = ''; // replaces the first zero with the actually typed digit
     }
     let currentValue = event.currentTarget.dataset.value; //the digit the user typed
@@ -41,7 +41,7 @@ class App extends Component {
       //limits the amount of digits the user can enter
       stateCopy.display = stateCopy.display + currentValue;
     }
-    if (stateCopy.memory[0] === '0') {
+    if (stateCopy.memory[0] === '0' && stateCopy.memory.match(/^\d+$/)) {
       //removes the initial zero to prevent octal problem. Try to delete this if statement and type "0006 ="
       stateCopy.memory = '';
     }
@@ -74,7 +74,6 @@ class App extends Component {
     }
 
     stateCopy.memory = this.preventLeadingZeros(stateCopy.memory);
-
     this.setState({
       //default behavior to calculate
       display: this.fixFloatingPoint(
@@ -116,7 +115,7 @@ class App extends Component {
     if (val) {
       return Number.parseFloat(val.toFixed(15));
     }
-    return val;
+    return '0';
   };
 
   percentage = event => {
@@ -183,7 +182,7 @@ class App extends Component {
   calculate = () => {
     let stateCopy = Object.assign({}, this.state);
 
-    if (stateCopy.memory[0] === '0') {
+    if (stateCopy.memory[0] === '0' && stateCopy.memory.match(/^\d+$/)) {
       //removes the initial zero to prevent octal problem. Try to delete this if statement and type "6 ="
       stateCopy.memory = '';
     }
@@ -212,7 +211,7 @@ class App extends Component {
   reset = () => {
     this.setState({
       display: '0',
-      memory: '',
+      memory: '0',
       resetDisplay: true
     });
   };
