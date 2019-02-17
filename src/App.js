@@ -18,6 +18,12 @@ class App extends Component {
 
   numberClick = event => {
     const stateCopy = Object.assign({}, this.state);
+    let currentValue = event.currentTarget.dataset.value; //the digit the user typed
+    let result = null;
+
+    if(stateCopy.display === '0') {
+      result = currentValue;
+    }
     if (this.state.resetDisplay) {
       // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
       this.setState({
@@ -27,15 +33,16 @@ class App extends Component {
     }
     if (this.state.resetMemory) {
       // reset InputValue to reset after equal sign
+      console.log('fired 30');
       this.setState({
         resetMemory: false
       });
       stateCopy.memory = '';
     }
-    if (stateCopy.display === '0' && stateCopy.memory === '0') {
-      stateCopy.display = ''; // replaces the first zero with the actually typed digit
-    }
-    let currentValue = event.currentTarget.dataset.value; //the digit the user typed
+    // if (stateCopy.display === '0') {
+    //   stateCopy.display = ''; // replaces the first zero with the actually typed digit
+    //   console.log('fired 37');
+    // }
 
     if (stateCopy.display.length <= 11) {
       //limits the amount of digits the user can enter
@@ -47,8 +54,8 @@ class App extends Component {
     }
 
     this.setState({
-      display: stateCopy.display,
-      memory: stateCopy.memory + currentValue
+      display: result ? result : stateCopy.display,
+      memory: result ? stateCopy.memory + result : stateCopy.memory + currentValue
     });
   };
 
@@ -92,7 +99,7 @@ class App extends Component {
   preventLeadingZeros = memory => {
     //remove eventual leading zeros to prevent octal error
     const parts = memory.split(/(\+|-|\*|\/)/);
-    return parts.map(part => part.replace(/0+/, '')).join('');
+    return parts.map(part => part.replace(/00+/, '')).join('');
   };
 
   preventOperatorAtEnd = string => {
@@ -187,6 +194,12 @@ class App extends Component {
       stateCopy.memory = '';
     }
 
+    // const result = this.fixFloatingPoint(
+    //   eval(
+    //     this.preventOperatorAtEnd(this.preventLeadingZeros(stateCopy.memory))
+    //   )
+    // ).toString();
+    
     const result = this.fixFloatingPoint(
       eval(
         this.preventOperatorAtEnd(this.preventLeadingZeros(stateCopy.memory))
