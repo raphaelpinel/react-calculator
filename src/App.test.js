@@ -1,9 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
 import App from './App';
+import Display from './components/Display/Display';
+import Button from './components/Button/Button';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+describe('App', () => {
+  let wrapper;
+  beforeEach(() => wrapper = shallow(<App />));
+
+  it('should render a <div />', () => {
+    expect(wrapper.find('div').length).toEqual(2);
+  });
+  
+  it('should render Display', () => {
+    expect(wrapper.containsMatchingElement(<Display />)).toEqual(true);
+  });
+
+  it('should render Buttons', () => {
+    expect(wrapper.find('Button').length).toEqual(19);
+  });
 });
+
+  
