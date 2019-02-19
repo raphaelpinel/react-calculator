@@ -24,6 +24,9 @@ class App extends Component {
     if(stateCopy.display === '0') {
       result = currentValue;
     }
+    if(currentValue === '.' && stateCopy.display.includes('.') ) {
+      result = stateCopy.display;
+    }
     if (this.state.resetDisplay) {
       // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
       this.setState({
