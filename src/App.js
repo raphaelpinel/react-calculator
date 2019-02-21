@@ -40,7 +40,7 @@ class App extends Component {
       newDisplay = display;
     }
     if (resetDisplay) {
-      newDisplay = value;
+      newDisplay = value === '.' ? '0.' : value;
       // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
       this.setState({
         resetDisplay: false
