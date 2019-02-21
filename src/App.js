@@ -37,31 +37,8 @@ class App extends Component {
         resetDisplay: false
       });
     }
-    // if (resetMemory) {
-    //   // reset InputValue to reset after equal sign
-    //   console.log('fired 30');
-    //   this.setState({
-    //     resetMemory: false
-    //   });
-    //   memory = '';
-    // }
-    // if (stateCopy.display === '0') {
-    //   stateCopy.display = ''; // replaces the first zero with the actually typed digit
-    //   console.log('fired 37');
-    // }
-
-    // if (display.length <= 11) {
-    //   //limits the amount of digits the user can enter
-       //display += value;
-    // }
-    // if (memory[0] === '0' && memory.match(/^\d+$/)) {
-    //   //removes the initial zero to prevent octal problem. Try to delete this if statement and type "0006 ="
-    //   memory = '';
-    // }
-
     this.setState({
       display: newDisplay,
-      //memory: result ? stateCopy.memory + result : stateCopy.memory + currentValue
     });
   };
 
