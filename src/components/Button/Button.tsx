@@ -14,7 +14,8 @@ const Button = (props: any) => {
       data-value={props.value}
       onClick={props.click}
     >
-      {props.label}
+      {/* use "x" as label for multiply */}
+      {props.label ? props.label : props.value} 
     </div>
   );
 };
