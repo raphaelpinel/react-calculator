@@ -79,12 +79,9 @@ class App extends Component {
 
     } else if (resetDisplay) {
       // if the user enters many times an operator, replace by the last one except if it is equal
-      if ((/\d$/).test(memory[memory.length -1])) {
-        // if memory has a digit at the end
-        if ((/[+\-*/]/).test(value)) {
-          // if the operator is not "="
+      if ((/\d$/).test(memory[memory.length -1]) && (/[+\-*/]/).test(value)) {
+        // if memory has a digit at the end and the operator is not "=", add the operator
           this.setState({ memory: memory.concat(value) })
-        }
       } else {
         // replace the last operator in memory by the new operator
       memory[memory.length -1] = memory[memory.length -1].slice(0, -1) + value;
