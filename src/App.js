@@ -17,6 +17,15 @@ class App extends Component {
     };
   }
 
+  fixFloatingPoint = val => {
+    if (val) {
+      return Number.parseFloat(val.toFixed(15));
+    }
+    return '0';
+  };
+  
+  safeEval2 = val => this.fixFloatingPoint(safeEval(val));
+
   numberClick = event => {
     let { display, resetDisplay } = this.state;
     let value = event.currentTarget.dataset.value; //the digit the user typed
@@ -60,7 +69,7 @@ class App extends Component {
     if (selectedOperator.value === '=' && !(resetDisplay && (/\d$/).test(memory.join('')))) {
       //prevent multiple equals
       const preResult = resetDisplay ? memory.join('').slice(0, -1) : memory.join('') + display ;
-      const result = preResult ? safeEval(preResult).toString() : display;
+      const result = preResult ? this.safeEval2(preResult).toString() : display;
       this.setState({memory: [], display: result});
 
     } else if (selectedOperator.value === '%') {
@@ -68,9 +77,9 @@ class App extends Component {
       if ((/[+-]/).test(memory[memory.length -1])) {
         const base = memory.join('').slice(0, -1);
         const finalOperator = memory.join('').slice(-1)
-        result = safeEval(`${base}${finalOperator}${base}*${display}/100`);
+        result = this.safeEval2(`${base}${finalOperator}${base}*${display}/100`);
       } else {
-        result = safeEval(`${display}/100`).toString();
+        result = this.safeEval2(`${display}/100`).toString();
       }
       this.setState({display: result.toString(), memory: []});
 
@@ -85,13 +94,13 @@ class App extends Component {
     } else if (selectedOperator.precedence === precedence && waiting !== 0) {
       // ex. 1+2*3* //6 // partial evaluate: memory was ["1+", "2*"] => ["1+", "6*"]
       const index = memory.length - 1 // 1 // could be also memory[waiting] 
-      const result =  safeEval(memory[index] + display).toString();
+      const result =  this.safeEval2(memory[index] + display).toString();
       memory[index] = result + value;
       this.setState({ display: result, memory });
 
     } else if (selectedOperator.precedence <= precedence) {
       // calculate all, ex: 2*2+ or 1+2*3+ // attention 1+2*3*5+ // should be 31
-      const result =  safeEval(memory.concat(display).join('')).toString();
+      const result =  this.safeEval2(memory.concat(display).join('')).toString();
       this.setState({memory: [result].concat(value), display: result, waiting: 0});
 
     } else if (selectedOperator.precedence > precedence && waiting === 0) {
@@ -106,13 +115,6 @@ class App extends Component {
         precedence: selectedOperator.precedence,
         resetDisplay: true,
       });
-  };
-
-  fixFloatingPoint = val => {
-    if (val) {
-      return Number.parseFloat(val.toFixed(15));
-    }
-    return '0';
   };
 
   inverse = () => {
