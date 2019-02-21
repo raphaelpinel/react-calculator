@@ -13,7 +13,9 @@ class App extends Component {
       precedence: 0,
       waiting: 0,
       memory: [], // where the numbers and operators are stored
-      resetDisplay: false, // set to true when the user has entered an operator or "=", then immediately back to false so s/he can continue entering a number
+      resetDisplay: false, // set to true when the user has entered an operator or "=", 
+      //then immediately back to false so s/he can continue entering a number
+      resetButton: 'AC'
     };
   }
 
@@ -27,9 +29,13 @@ class App extends Component {
   safeEval2 = val => this.fixFloatingPoint(safeEval(val));
 
   numberClick = event => {
-    let { display, resetDisplay } = this.state;
+    let { display, resetDisplay, resetButton } = this.state;
     let value = event.currentTarget.dataset.value; //the digit the user typed
     let newDisplay = display + value;
+
+    if (value !== '0') {
+      this.setState({ resetButton: 'C' });
+    }
 
     if(display === '0' && value !== '.') {
       // replaces the zero by the actual value
@@ -132,18 +138,20 @@ class App extends Component {
       memory: [],
       resetDisplay: false,
       precedence: 0,
-      waiting: 0
+      waiting: 0,
+      resetButton: 'AC',
     });
   };
 
   render() {
+    const { display, resetButton } = this.state;
     return (
       <div className={styles.App}>
-        <Display display={this.state.display} />
+        <Display display={display} />
         <div className="Buttons">
           <Button
             click={this.reset}
-            value="AC"
+            value={ resetButton }
             special="lightgrey"
           />
           <Button
