@@ -57,16 +57,12 @@ class App extends Component {
     
     const selectedOperator = operators.filter(operator => operator.value === value)[0];
 
-    if (selectedOperator.value === '=') {
+    if (selectedOperator.value === '=' && !(resetDisplay && (/\d$/).test(memory.join('')))) {
       //prevent multiple equals
-      if (resetDisplay && (/\d$/).test(memory.join(''))) {
-        console.log("pressed = again")
-      } else {
-        console.log("pressed =")
       const preResult = resetDisplay ? memory.join('').slice(0, -1) : memory.join('') + display ;
       const result = preResult ?  safeEval(preResult).toString() : display;
       this.setState({memory: [], display: result});
-      }
+      
     } else if (selectedOperator.value === '%') {
       let result;
       if ((/[+-]/).test(memory[memory.length -1])) {
