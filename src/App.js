@@ -60,33 +60,29 @@ class App extends Component {
     if (selectedOperator.value === '=' && !(resetDisplay && (/\d$/).test(memory.join('')))) {
       //prevent multiple equals
       const preResult = resetDisplay ? memory.join('').slice(0, -1) : memory.join('') + display ;
-      const result = preResult ?  safeEval(preResult).toString() : display;
+      const result = preResult ? safeEval(preResult).toString() : display;
       this.setState({memory: [], display: result});
-      
+
     } else if (selectedOperator.value === '%') {
       let result;
       if ((/[+-]/).test(memory[memory.length -1])) {
-        console.log('+ or - at the end', memory[memory.length -1]); 
         const base = memory.join('').slice(0, -1);
         const finalOperator = memory.join('').slice(-1)
-        result =  safeEval(base + finalOperator + base + "*" + display + "/100");
+        result = safeEval(`${base}${finalOperator}${base}*${display}/100`);
       } else {
-        result =  safeEval(display + "/100").toString();
+        result = safeEval(`${display}/100`).toString();
       }
-      this.setState({display: result.toString(), memory: [result]});
-      console.log('TCL: App -> result', result);
+      this.setState({display: result.toString(), memory: []});
 
     } else if (memory.length === 0) {
-      console.log('case first operator');
       this.setState({memory: memory.concat(display, value)});
 
     } else if (resetDisplay) {
       // if the user enters many times an operator, replace by the last one except if it is equal
       if ((/\d$/).test(memory[memory.length -1])) {
         // if memory has a digit at the end
-        console.log('digit at the end, simply add operator')
         if ((/[+\-*/]/).test(value)) {
-          // if the operator is not =
+          // if the operator is not "="
           this.setState({ memory: memory.concat(value) })
         }
       } else {
