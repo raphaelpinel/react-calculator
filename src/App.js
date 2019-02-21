@@ -79,34 +79,22 @@ class App extends Component {
 
     } else if (resetDisplay) {
       // if the user enters many times an operator, replace by the last one except if it is equal
-      if ((/\d$/).test(memory[memory.length -1]) && (/[+\-*/]/).test(value)) {
-        // if memory has a digit at the end and the operator is not "=", add the operator
-          this.setState({ memory: memory.concat(value) })
-      } else {
-        // replace the last operator in memory by the new operator
       memory[memory.length -1] = memory[memory.length -1].slice(0, -1) + value;
       this.setState({memory});
-      console.log('replaced last operator');
-      }
 
     } else if (selectedOperator.precedence === precedence && waiting !== 0) {
-      console.log ('partial  safeEvaluate');  
-      // ex. 1+2*3* //6 // partial  safeEvaluate: memory was ["1+", "2*"] => ["1+", "6*"]
+      // ex. 1+2*3* //6 // partial evaluate: memory was ["1+", "2*"] => ["1+", "6*"]
       const index = memory.length - 1 // 1 // could be also memory[waiting] 
       const result =  safeEval(memory[index] + display).toString();
       memory[index] = result + value;
       this.setState({ display: result, memory });
 
     } else if (selectedOperator.precedence <= precedence) {
-      console.log ('case calculate all');
       // calculate all, ex: 2*2+ or 1+2*3+ // attention 1+2*3*5+ // should be 31
       const result =  safeEval(memory.concat(display).join('')).toString();
-			console.log('TCL: App -> memory.concat(display).join("")', memory.concat(display).join(''))
-			console.log('TCL: App -> result', result);
       this.setState({memory: [result].concat(value), display: result, waiting: 0});
 
     } else if (selectedOperator.precedence > precedence && waiting === 0) {
-      console.log('case precedence > and waiting 0: wait and waiting++')
       // case 1+2* // need to wait: waiting++ // memory should be ["1+", "2*"]
       this.setState({ waiting: waiting +1, memory: memory.concat(display + value)});
 
@@ -115,7 +103,6 @@ class App extends Component {
       alert("error !!!");
     }
       return this.setState({
-        //memory: this.preventOperatorAtEnd(memory) + value,
         precedence: selectedOperator.precedence,
         resetDisplay: true,
       });
