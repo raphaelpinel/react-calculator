@@ -432,6 +432,27 @@ describe('calculations with equal', () => {
     wrapper.find('[value="/"]').simulate('click');
     expect(wrapper.state('display')).toEqual('3');
     expect(wrapper.state('memory')).toEqual(['3', '/']);
+  });
+
+  it('3+.', () => {
+    wrapper.setState({ memory: [], display: '0'});
+    wrapper.find('[value="3"]').simulate('click');
+    wrapper.find('[value="+"]').simulate('click');
+    wrapper.find('[value="."]').simulate('click');
+    expect(wrapper.state('display')).toEqual('0.');
+  })
+
+  it('0.2+0.4', () => {
+    wrapper.setState({ memory: [], display: '0'});
+    wrapper.find('[value="0"]').simulate('click');
+    wrapper.find('[value="."]').simulate('click');
+    wrapper.find('[value="2"]').simulate('click');
+    wrapper.find('[value="+"]').simulate('click');
+    wrapper.find('[value="0"]').simulate('click');
+    wrapper.find('[value="."]').simulate('click');
+    wrapper.find('[value="4"]').simulate('click');
+    wrapper.find('[value="="]').simulate('click');
+    expect(wrapper.state('display')).toEqual('0.6');
   })
 
 });

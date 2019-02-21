@@ -108,28 +108,6 @@ class App extends Component {
       });
   };
 
-  // preventLeadingZeros = memory => {
-  //   //remove eventual leading zeros to prevent octal error
-  //   const parts = memory.split(/(\+|-|\*|\/)/);
-  //   return parts.map(part => part.replace(/00+/, '')).join('');
-  // };
-
-  // preventOperatorAtEnd = string => {
-  //   //helper function to remove the last operator to prevent an error if  safeEval('6*') would be run, and to avoid multiple operators in memory
-  //   let result;
-  //   const lastCharacter = string[string.length - 1];
-  //   if (
-  //     lastCharacter === '+' ||
-  //     lastCharacter === '-' ||
-  //     lastCharacter === '*' ||
-  //     lastCharacter === '/'
-  //   ) {
-  //     result = string.slice(0, -1);
-  //     return result;
-  //   }
-  //   return string;
-  // };
-
   fixFloatingPoint = val => {
     if (val) {
       return Number.parseFloat(val.toFixed(15));
