@@ -151,7 +151,8 @@ class App extends Component {
         <div className="Buttons">
           <Button
             click={this.reset}
-            value={ resetButton }
+            value={resetButton}
+            label="AC"
             special="lightgrey"
           />
           <Button
