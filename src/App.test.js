@@ -460,7 +460,7 @@ describe('calculations with equal', () => {
     wrapper.find('[value="9"]').simulate('click');
     wrapper.find('[value="+"]').simulate('click');
     wrapper.find('[value="3"]').simulate('click');
-    wrapper.find('[label="AC"]').simulate('click');
+    wrapper.find('[name="AC"]').simulate('click');
     wrapper.find('[value="4"]').simulate('click');
     wrapper.find('[value="="]').simulate('click');
     expect(wrapper.state('display')).toEqual('13');
