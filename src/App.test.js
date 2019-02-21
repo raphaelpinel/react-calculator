@@ -424,6 +424,16 @@ describe('calculations with equal', () => {
     expect(wrapper.state('memory')).toEqual([]);
   });
 
+  it('3+*/=', () => {
+    wrapper.setState({ memory: [], display: '0'});
+    wrapper.find('[value="3"]').simulate('click');
+    wrapper.find('[value="+"]').simulate('click');
+    wrapper.find('[value="*"]').simulate('click');
+    wrapper.find('[value="/"]').simulate('click');
+    expect(wrapper.state('display')).toEqual('3');
+    expect(wrapper.state('memory')).toEqual(['3', '/']);
+  })
+
 });
 
   
