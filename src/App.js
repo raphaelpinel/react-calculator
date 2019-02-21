@@ -51,8 +51,8 @@ class App extends Component {
       {value: '-', operation(a, b) {return a - b}, precedence: 1},
       {value: '*', operation(a, b) {return a * b}, precedence: 2},
       {value: '/', operation(a, b) {return a / b}, precedence: 2},
-      {value: '=', precedence: 0},
-      {value: '%', precedence: 0},
+      {value: '='},
+      {value: '%'},
     ];
     
     const selectedOperator = operators.filter(operator => operator.value === value)[0];
