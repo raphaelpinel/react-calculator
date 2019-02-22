@@ -1,166 +1,133 @@
-import React, { Component } from "react";
-import safeEval from "safe-eval";
-import classNames from "classnames";
-import styles from "./App.module.css";
+import React, { Component } from 'react';
+import safeEval from 'safe-eval';
+import classNames from 'classnames';
+import styles from './App.module.css';
 
-import Display from "./components/Display/Display.js";
-import Button from "./components/Button/Button";
+import Display from './components/Display/Display.js';
+import Button from './components/Button/Button';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      display: "0", // the value displayed
-      precedence: 0,
-      waiting: 0,
+      display: '0', // the value displayed
       memory: [], // where the numbers and operators are stored
-      resetDisplay: false, // set to true when the user has entered an operator or "=",
-      //then immediately back to false so s/he can continue entering a number
-      resetButton: "AC",
-      operator: ""
+      precedence: 0, // precedence of the last entered operator
+      waiting: 0, // if an operation cannot be calculated yet
+      resetDisplay: false, // true when user enters an operator, false when to enter number after that
+      resetButton: 'AC', // can change to C
+      operator: '' // used for adding active class
     };
   }
 
   fixFloatingPoint = val => {
+    //to avoid floating point errors
     if (val) {
       return Number.parseFloat(val.toFixed(15));
     }
-    return "0";
+    return '0';
   };
 
   safeEval2 = val => this.fixFloatingPoint(safeEval(val));
 
   numberClick = event => {
-    let { display, resetDisplay, resetButton } = this.state;
+    let { display, resetDisplay } = this.state;
     let value = event.currentTarget.dataset.value; //the digit the user typed
     let newDisplay = display + value;
-
-    if (value !== "0") {
-      this.setState({ resetButton: "C" });
+    if (value !== '0') {
+      this.setState({ resetButton: 'C' });
     }
-
-    if (display === "0" && value !== ".") {
+    if (display === '0' && value !== '.') {
       // replaces the zero by the actual value
       newDisplay = value;
     }
-    if (value === "." && display.includes(".")) {
+    if (value === '.' && display.includes('.')) {
       // prevents multiple '.'
       newDisplay = display;
     }
     if (resetDisplay) {
-      newDisplay = value === "." ? "0." : value;
-      // reset InputValue to allow user to enter 2nd part number after operator and stores the first part value to FirstPartValue.
+      newDisplay = value === '.' ? '0.' : value;
+      // reset InputValue to allow user to enter 2nd part number after operator
       this.setState({
         resetDisplay: false
       });
     }
-    this.setState({
+    return this.setState({
       display: newDisplay
     });
   };
 
   active = operator => {
+    //sets active class for pressed operator button
     return this.state.resetDisplay && operator === this.state.operator
-      ? "active"
-      : "";
+      ? 'active'
+      : '';
   };
-
-  toggleActive = event => {
-    const { classList } = event.currentTarget;
-    if (classList.value.includes("active")) {
-      classList.remove("active");
-    } else {
-      classList.add("active");
-    }
-  };
-
-  addActive = event => event.currentTarget.classList.add("active");
-
-  removeActive = event => event.currentTarget.classList.remove("active");
 
   operatorClick = event => {
-    //this.toggleActive(event);
-    const { classList } = event.currentTarget;
-
     let { display, precedence, memory, resetDisplay, waiting } = this.state;
     const value = event.currentTarget.dataset.value; // the operator entered by user
-
     const operators = [
       {
-        value: "+",
-        operation(a, b) {
-          return a + b;
-        },
+        value: '+',
         precedence: 1
       },
       {
-        value: "-",
-        operation(a, b) {
-          return a - b;
-        },
+        value: '-',
         precedence: 1
       },
       {
-        value: "*",
-        operation(a, b) {
-          return a * b;
-        },
+        value: '*',
         precedence: 2
       },
       {
-        value: "/",
-        operation(a, b) {
-          return a / b;
-        },
+        value: '/',
         precedence: 2
       },
-      { value: "=" },
-      { value: "%" }
+      { value: '=' },
+      { value: '%' }
     ];
-
     const selectedOperator = operators.filter(
       operator => operator.value === value
     )[0];
-
     if (
-      selectedOperator.value === "=" &&
-      !(resetDisplay && /\d$/.test(memory.join("")))
+      selectedOperator.value === '=' &&
+      !(resetDisplay && /\d$/.test(memory.join('')))
     ) {
       //prevent multiple equals
       const preResult = resetDisplay
-        ? memory.join("").slice(0, -1)
-        : memory.join("") + display;
+        ? memory.join('').slice(0, -1)
+        : memory.join('') + display;
       const result = preResult ? this.safeEval2(preResult).toString() : display;
       this.setState({ memory: [], display: result });
-    } else if (selectedOperator.value === "%") {
+    } else if (selectedOperator.value === '%') {
       let result;
       if (/[+-]/.test(memory[memory.length - 1])) {
-        const base = memory.join("").slice(0, -1);
-        const finalOperator = memory.join("").slice(-1);
+        const base = memory.join('').slice(0, -1);
+        const finalOperator = memory.join('').slice(-1);
         result = this.safeEval2(
-          `${base}${finalOperator}${base}*${display}/100`
+          base + finalOperator + base + '*' + display + '/100'
         );
       } else {
-        result = this.safeEval2(`${display}/100`).toString();
+        result = this.safeEval2(display + '/100').toString();
       }
       this.setState({ display: result.toString(), memory: [] });
     } else if (memory.length === 0) {
       this.setState({ memory: memory.concat(display, value) });
-      this.addActive(event);
     } else if (resetDisplay) {
-      // if the user enters many times an operator, replace by the last one except if it is equal
+      // if user enters many times an operator, replace by the last one except if "="
       memory[memory.length - 1] =
         memory[memory.length - 1].slice(0, -1) + value;
       this.setState({ memory });
     } else if (selectedOperator.precedence === precedence && waiting !== 0) {
       // ex. 1+2*3* //6 // partial evaluate: memory was ["1+", "2*"] => ["1+", "6*"]
-      const index = memory.length - 1; // 1 // could be also memory[waiting]
+      const index = memory.length - 1;
       const result = this.safeEval2(memory[index] + display).toString();
       memory[index] = result + value;
       this.setState({ display: result, memory });
     } else if (selectedOperator.precedence <= precedence) {
-      // calculate all, ex: 2*2+ or 1+2*3+ // attention 1+2*3*5+ // should be 31
-      const result = this.safeEval2(memory.concat(display).join("")).toString();
+      // calculate all, ex: 2*2+ or 1+2*3+ or 1+2*3*5+ // should be 31
+      const result = this.safeEval2(memory.concat(display).join('')).toString();
       this.setState({
         memory: [result].concat(value),
         display: result,
@@ -173,8 +140,8 @@ class App extends Component {
         memory: memory.concat(display + value)
       });
     } else {
-      this.setState({ display: "error" });
-      alert("error !!!");
+      this.setState({ display: 'error' });
+      alert('error !!!');
     }
     return this.setState({
       precedence: selectedOperator.precedence,
@@ -187,52 +154,52 @@ class App extends Component {
     const { display } = this.state;
     // checks if the number starts already with a minus sign to remove it, otherwise adds it
     const newDisplay =
-      display.charAt(0) === "-" ? display.substr(1) : `-${display}`;
-    this.setState({
+      display.charAt(0) === '-' ? display.substr(1) : `-${display}`;
+    return this.setState({
       display: newDisplay
     });
   };
 
   reset = () => {
     const { resetButton } = this.state;
-    if (resetButton === "C") {
-      return this.setState({ display: "0", resetButton: "AC" });
+    if (resetButton === 'C') {
+      return this.setState({ display: '0', resetButton: 'AC' });
     }
-    this.setState({
-      display: "0",
+    return this.setState({
+      display: '0',
       memory: [],
       resetDisplay: false,
       precedence: 0,
       waiting: 0,
-      resetButton: "AC"
+      resetButton: 'AC'
     });
   };
 
   render() {
     const { display, resetButton } = this.state;
-    const btnClass = "Button";
+    const btnClass = 'Button';
     return (
       <div className={styles.App}>
         <Display display={display} />
         <div className="Buttons">
           <Button
-            className={classNames(btnClass, "lightgrey")}
+            className={classNames(btnClass, 'lightgrey')}
             click={this.reset}
             value={resetButton}
             name="AC"
           />
           <Button
-            className={classNames(btnClass, "lightgrey")}
+            className={classNames(btnClass, 'lightgrey')}
             click={this.inverse}
             value="+/-"
           />
           <Button
-            className={classNames(btnClass, "lightgrey")}
+            className={classNames(btnClass, 'lightgrey')}
             click={this.operatorClick}
             value="%"
           />
           <Button
-            className={classNames(btnClass, "orange", this.active("/"))}
+            className={classNames(btnClass, 'orange', this.active('/'))}
             click={this.operatorClick}
             value="/"
           />
@@ -253,7 +220,7 @@ class App extends Component {
             value="9"
           />
           <Button
-            className={classNames(btnClass, "orange", this.active("*"))}
+            className={classNames(btnClass, 'orange', this.active('*'))}
             click={this.operatorClick}
             value="*"
             label="x"
@@ -275,7 +242,7 @@ class App extends Component {
             value="6"
           />
           <Button
-            className={classNames(btnClass, "orange", this.active("-"))}
+            className={classNames(btnClass, 'orange', this.active('-'))}
             click={this.operatorClick}
             value="-"
           />
@@ -296,13 +263,13 @@ class App extends Component {
             value="3"
           />
           <Button
-            className={classNames(btnClass, "orange", this.active("+"))}
+            className={classNames(btnClass, 'orange', this.active('+'))}
             click={this.operatorClick}
             value="+"
           />
 
           <Button
-            className={classNames(btnClass, "double")}
+            className={classNames(btnClass, 'double')}
             click={this.numberClick}
             value="0"
           />
@@ -312,7 +279,7 @@ class App extends Component {
             value="."
           />
           <Button
-            className={classNames(btnClass, "orange")}
+            className={classNames(btnClass, 'orange')}
             click={this.operatorClick}
             value="="
             special="orange"
