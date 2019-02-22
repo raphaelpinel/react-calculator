@@ -485,8 +485,18 @@ describe('calculations with equal', () => {
     expect(wrapper.state('display')).toEqual('0');
   });
 
+});
 
+describe('active classes', () => {
+  let wrapper;
+  beforeEach(() => wrapper = mount(<App />));
 
+  it('class active is added on + button then removed', () => {
+    wrapper.find('[value="+"]').simulate('click');
+    expect(wrapper.find('[value="+"]').html()).toEqual('<div class="Button orange active" data-value="+">+</div>');
+    wrapper.find('[value="3"]').simulate('click');
+    expect(wrapper.find('[value="+"]').html()).toEqual('<div class="Button orange" data-value="+">+</div>');
+  });
 });
 
   

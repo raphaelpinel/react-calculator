@@ -58,6 +58,7 @@ class App extends Component {
   };
 
   operatorClick = event => {
+    event.currentTarget.classList.add('active');
     let { display, precedence, memory, resetDisplay, waiting } = this.state
     const value = event.currentTarget.dataset.value; // the operator entered by user
     
@@ -191,6 +192,7 @@ class App extends Component {
             click={this.operatorClick}
             value="-"
             special="orange"
+            //active={true}
           />
 
           <Button click={this.numberClick} value="1" />

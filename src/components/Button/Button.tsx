@@ -5,7 +5,7 @@ const Button = (props: any) => {
   const classesArray = [styles.Button];
   if (props.special) {
     const specialStyle = props.special;
-    classesArray.push(styles[specialStyle]); //adding special css class in order to make buttons orange or lightgrey
+    classesArray.push(styles[specialStyle], props.active ? styles.active : ''); //adding special css class in order to make buttons orange or lightgrey
   }
 
   return (

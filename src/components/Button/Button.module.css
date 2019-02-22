@@ -22,7 +22,7 @@
   background: #777;
 }
 .double {
-  width: 50px;
+  width: 40px;
   border-radius: 30px;
   padding: 18px 78px 18px 30px;
   text-align: left;
@@ -46,7 +46,7 @@
   background: #f5dd75;
   color: orange;
 }
-.orange:active,
+
 .orange.active {
   background: white;
   color: orange;
