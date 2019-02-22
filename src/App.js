@@ -133,6 +133,10 @@ class App extends Component {
   };
 
   reset = () => {
+    const { resetButton } = this.state;
+    if (resetButton === 'C') {
+      return this.setState({display: '0', resetButton: 'AC'});
+    } 
     this.setState({
       display: '0',
       memory: [],

@@ -461,9 +461,28 @@ describe('calculations with equal', () => {
     wrapper.find('[value="+"]').simulate('click');
     wrapper.find('[value="3"]').simulate('click');
     wrapper.find('[name="AC"]').simulate('click');
+    expect(wrapper.state('display')).toEqual('0');
     wrapper.find('[value="4"]').simulate('click');
     wrapper.find('[value="="]').simulate('click');
     expect(wrapper.state('display')).toEqual('13');
+  });
+
+  it('56C and AC to C', () => {
+    wrapper.setState({ memory: [], display: '0'});
+    wrapper.find('[value="5"]').simulate('click');
+    expect(wrapper.find('[name="AC"]').html()).toEqual('<div class="Button lightgrey" data-value="C">C</div>');
+    wrapper.find('[value="6"]').simulate('click');
+    wrapper.find('[name="AC"]').simulate('click');
+    expect(wrapper.find('[name="AC"]').html()).toEqual('<div class="Button lightgrey" data-value="AC">AC</div>');
+    expect(wrapper.state('display')).toEqual('0');
+  });
+
+  it('96C', () => {
+    wrapper.setState({ memory: [], display: '0'});
+    wrapper.find('[value="5"]').simulate('click');
+    wrapper.find('[value="6"]').simulate('click');
+    wrapper.find('[name="AC"]').simulate('click');
+    expect(wrapper.state('display')).toEqual('0');
   });
 
 
